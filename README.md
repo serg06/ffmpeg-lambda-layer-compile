@@ -7,6 +7,7 @@ The goal of this repository is to compile a functioning ffmpeg binary with the f
 - Can process common types of audio like mp3, aac, and mp4
 - Supports https/tls
 - Space-efficient since Lambda functions are limited to ~262MB
+  - Current binary sizes are 27.8MB (ffmeg) and 27.7MB (ffprobe).
 
 ### Setup
 
