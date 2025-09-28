@@ -9,6 +9,14 @@ The goal of this repository is to compile a functioning ffmpeg binary with the f
 - Space-efficient since Lambda functions are limited to ~262MB
   - Current binary sizes are 27.8MB (ffmeg) and 27.7MB (ffprobe).
 
+### Usage
+
+To create a lambda layer:
+- Go to [releases](https://github.com/serg06/ffmpeg-lambda-layer-compile/releases) and download the layer zip
+- Go to AWS console -> AWS Lambda -> layers and upload this zip
+- Add that layer to any Lambda function
+- ffmpeg/ffprobe will be available at `/opt/bin/ffmpeg` and `/opt/bin/ffprobe`
+
 ### Setup
 
 You'll need to do some setup before running the build script:
@@ -16,6 +24,7 @@ You'll need to do some setup before running the build script:
 
 ### Building
 
+If the pre-built version doesn't work for you, you can build it yourself:
 - Run `./build.sh` to compile `ffmpeg` and `ffprobe` in a docker image
 - Run `./extract.sh` to extract them and zip them up
 - (Optional) Upload the .zip to an AWS Lambda Layer
@@ -38,7 +47,9 @@ Update the Dockerfile and run `build.sh` until it works.
 
 If you want to compile for other flavors of Linux, check out these docker images: https://github.com/jrottenberg/ffmpeg/tree/main/docker-images
 
-If you don't need https/tls support, you can use [John Van Sickle's builds](https://www.johnvansickle.com/ffmpeg/). They work on Amazon Lambda 2023, but attempting to use https will trigger a segfault: `ffmpeg was killed with signal SIGSEGV`.
+If you don't need https/tls support:
+- You can use [John Van Sickle's builds](https://www.johnvansickle.com/ffmpeg/). They work on Amazon Lambda 2023, but attempting to use https will trigger a segfault: `ffmpeg was killed with signal SIGSEGV`.
+- You can also use the popular [ffmpeg-lambda-layer](https://serverlessrepo.aws.amazon.com/applications/us-east-1/145266761615/ffmpeg-lambda-layer) which has the same issue.
 
 If you don't mind having a large binary, you can use https://github.com/BtbN/FFmpeg-Builds/releases. You can get a functioning ~240MB Lambda layer by doing the following:
 - Download the shared build `ffmpeg-master-latest-linux64-gpl-shared`
