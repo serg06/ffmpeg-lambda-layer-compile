@@ -4,6 +4,7 @@ The goal of this repository is to compile a functioning ffmpeg binary with the f
 - Static
 - Runs on Amazon Lambda node22.x / Amazon Linux 2023
 - Runs on x86 / amd64
+- Modern version of ffmpeg (>=7)
 - Can process common types of audio like mp3, aac, and mp4
 - Supports https/tls
 - Space-efficient since Lambda functions are limited to ~262MB
@@ -11,8 +12,10 @@ The goal of this repository is to compile a functioning ffmpeg binary with the f
 
 ### Usage
 
+If you just want a compiled version of ffmpeg/ffprobe, you can find it in [releases](https://github.com/serg06/ffmpeg-lambda-layer-compile/releases).
+
 To create a lambda layer:
-- Go to [releases](https://github.com/serg06/ffmpeg-lambda-layer-compile/releases) and download the layer zip
+- Go to [releases]() and download the layer zip
 - Go to AWS console -> AWS Lambda -> layers and upload this zip
 - Add that layer to any Lambda function
 - ffmpeg/ffprobe will be available at `/opt/bin/ffmpeg` and `/opt/bin/ffprobe`
