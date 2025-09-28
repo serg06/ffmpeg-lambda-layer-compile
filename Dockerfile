@@ -6,42 +6,57 @@ ARG LAME_VER=3.100
 ARG OPENSSL_VER=3.3.1
 ARG ZLIB_VER=1.3.1
 
-# Build deps
-RUN dnf -y update && dnf -y install --allowerasing \
+# Install build dependencies
+RUN dnf -y update
+RUN dnf -y install --allowerasing \
     gcc gcc-c++ make autoconf automake libtool pkgconfig \
     yasm nasm git wget curl tar xz bzip2 which perl \
-    # helpful but small
-    ca-certificates && \
-    dnf clean all
+    ca-certificates
+RUN dnf clean all
 
+# Set up build environment
 WORKDIR /opt/build
 ENV PREFIX=/opt/ffbuild
 ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig
 ENV PATH=$PREFIX/bin:$PATH
 RUN mkdir -p $PREFIX
 
-# -------- zlib (static) --------
-RUN curl -L https://zlib.net/zlib-$ZLIB_VER.tar.xz | tar -xJ && \
-    cd zlib-$ZLIB_VER && \
-    ./configure --static --prefix=$PREFIX && \
-    make -j$(nproc) && make install
+# Download and extract zlib
+RUN curl -L https://zlib.net/zlib-$ZLIB_VER.tar.xz | tar -xJ
 
-# -------- OpenSSL (static) --------
-RUN curl -L https://www.openssl.org/source/openssl-$OPENSSL_VER.tar.gz | tar -xz && \
-    cd openssl-$OPENSSL_VER && \
-    ./Configure no-shared linux-aarch64 --prefix=$PREFIX --libdir=lib && \
-    make -j$(nproc) && make install_sw
+# Build zlib (static)
+WORKDIR /opt/build/zlib-$ZLIB_VER
+RUN ./configure --static --prefix=$PREFIX
+RUN make -j$(nproc)
+RUN make install
 
-# -------- LAME (static) --------
-RUN curl -L https://downloads.sourceforge.net/project/lame/lame/$LAME_VER/lame-$LAME_VER.tar.gz | tar -xz && \
-    cd lame-$LAME_VER && \
-    ./configure --prefix=$PREFIX --enable-static --disable-shared --disable-decoder --disable-frontend && \
-    make -j$(nproc) && make install
+# Download and extract OpenSSL
+WORKDIR /opt/build
+RUN curl -L https://www.openssl.org/source/openssl-$OPENSSL_VER.tar.gz | tar -xz
 
-# -------- FFmpeg (mostly static, with static deps) --------
-RUN curl -L https://ffmpeg.org/releases/ffmpeg-$FFMPEG_VER.tar.xz | tar -xJ && \
-    cd ffmpeg-$FFMPEG_VER && \
-    PKG_CONFIG_PATH=$PKG_CONFIG_PATH \
+# Build OpenSSL (static)
+WORKDIR /opt/build/openssl-$OPENSSL_VER
+RUN ./Configure no-shared linux-aarch64 --prefix=$PREFIX --libdir=lib
+RUN make -j$(nproc)
+RUN make install_sw
+
+# Download and extract LAME
+WORKDIR /opt/build
+RUN curl -L https://downloads.sourceforge.net/project/lame/lame/$LAME_VER/lame-$LAME_VER.tar.gz | tar -xz
+
+# Build LAME (static)
+WORKDIR /opt/build/lame-$LAME_VER
+RUN ./configure --prefix=$PREFIX --enable-static --disable-shared --disable-decoder --disable-frontend
+RUN make -j$(nproc)
+RUN make install
+
+# Download and extract FFmpeg
+WORKDIR /opt/build
+RUN curl -L https://ffmpeg.org/releases/ffmpeg-$FFMPEG_VER.tar.xz | tar -xJ
+
+# Configure FFmpeg
+WORKDIR /opt/build/ffmpeg-$FFMPEG_VER
+RUN PKG_CONFIG_PATH=$PKG_CONFIG_PATH \
     ./configure \
       --prefix=$PREFIX \
       --pkg-config-flags="--static" \
@@ -61,13 +76,18 @@ RUN curl -L https://ffmpeg.org/releases/ffmpeg-$FFMPEG_VER.tar.xz | tar -xJ && \
       --enable-parser=mpegaudio,aac,flac \
       --enable-demuxer=wav,mp3,aac,flac,wv,matroska,mov \
       --enable-muxer=mp3,wav,adts,matroska \
-      --enable-filter=aresample,aformat,anull,volume && \
-    make -j$(nproc) && make install && \
-    strip $PREFIX/bin/ffmpeg
+      --enable-filter=aresample,aformat,anull,volume
+
+# Build FFmpeg
+RUN make -j$(nproc)
+
+# Install FFmpeg
+RUN make install
+
+# Strip the binary
+RUN strip $PREFIX/bin/ffmpeg
 
 # Final minimal image that just carries the artifact
 FROM amazonlinux:2023 AS out
 COPY --from=build /opt/ffbuild/bin/ffmpeg /usr/local/bin/ffmpeg
-# Sanity: show it runs (comment out if you don't want a run at build time)
-# RUN /usr/local/bin/ffmpeg -version
 CMD ["/bin/bash"]
