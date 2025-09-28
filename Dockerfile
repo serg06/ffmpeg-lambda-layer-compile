@@ -1,6 +1,7 @@
 # Build FFmpeg 7 with static libmp3lame + static OpenSSL on Amazon Linux 2023
 FROM amazonlinux:2023 AS build
 
+# Arbitrary versions chosen by Cursor
 ARG FFMPEG_VER=7.0.2
 ARG LAME_VER=3.100
 ARG OPENSSL_VER=3.3.1
