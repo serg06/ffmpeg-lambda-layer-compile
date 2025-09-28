@@ -36,7 +36,7 @@ RUN curl -L https://www.openssl.org/source/openssl-$OPENSSL_VER.tar.gz | tar -xz
 
 # Build OpenSSL (static)
 WORKDIR /opt/build/openssl-$OPENSSL_VER
-RUN ./Configure no-shared linux-aarch64 --prefix=$PREFIX --libdir=lib
+RUN ./Configure no-shared linux-x86_64 --prefix=$PREFIX --libdir=lib
 RUN make -j$(nproc)
 RUN make install_sw
 
