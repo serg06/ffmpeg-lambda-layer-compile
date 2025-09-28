@@ -12,13 +12,7 @@ The goal of this repository is to compile a functioning ffmpeg binary with the f
 
 ### Usage
 
-If you just want a compiled version of ffmpeg/ffprobe, you can find it in [releases](https://github.com/serg06/ffmpeg-lambda-layer-compile/releases).
-
-To create a lambda layer:
-- Go to [releases]() and download the layer zip
-- Go to AWS console -> AWS Lambda -> layers and upload this zip
-- Add that layer to any Lambda function
-- ffmpeg/ffprobe will be available at `/opt/bin/ffmpeg` and `/opt/bin/ffprobe`
+If you just want a compiled version of ffmpeg/ffprobe, either to use on an AWS Lambda Layer or to copy to your function, you can find it in [releases](https://github.com/serg06/ffmpeg-lambda-layer-compile/releases).
 
 ### Setup
 
