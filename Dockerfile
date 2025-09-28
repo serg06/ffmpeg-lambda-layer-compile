@@ -84,10 +84,11 @@ RUN make -j$(nproc)
 # Install FFmpeg
 RUN make install
 
-# Strip the binary
-RUN strip $PREFIX/bin/ffmpeg
+# Strip the binaries
+RUN strip $PREFIX/bin/ffmpeg $PREFIX/bin/ffprobe
 
-# Final minimal image that just carries the artifact
+# Final minimal image that just carries the artifacts
 FROM amazonlinux:2023 AS out
 COPY --from=build /opt/ffbuild/bin/ffmpeg /usr/local/bin/ffmpeg
+COPY --from=build /opt/ffbuild/bin/ffprobe /usr/local/bin/ffprobe
 CMD ["/bin/bash"]
