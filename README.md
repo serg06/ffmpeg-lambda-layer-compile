@@ -49,7 +49,7 @@ If you want to compile for other flavors of Linux, check out these docker images
 
 If you don't need https/tls support:
 - You can use [John Van Sickle's builds](https://www.johnvansickle.com/ffmpeg/). They work on Amazon Lambda 2023, but attempting to use https will trigger a segfault: `ffmpeg was killed with signal SIGSEGV`.
-- You can also use the popular [ffmpeg-lambda-layer](https://serverlessrepo.aws.amazon.com/applications/us-east-1/145266761615/ffmpeg-lambda-layer) which has the same issue.
+- You can also use the popular [ffmpeg-lambda-layer](https://serverlessrepo.aws.amazon.com/applications/us-east-1/145266761615/ffmpeg-lambda-layer) which has the same issue, but it's still on FFmpeg 4.
 
 If you don't mind having a large binary, you can use https://github.com/BtbN/FFmpeg-Builds/releases. You can get a functioning ~240MB Lambda layer by doing the following:
 - Download the shared build `ffmpeg-master-latest-linux64-gpl-shared`
