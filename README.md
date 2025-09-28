@@ -25,9 +25,9 @@ You'll need to do some setup before running the build script:
 
 AWS Lambda defaults to x86 so this compiles for x86 by default. To change this:
 - Update `build.sh` and `extract.sh`
--- Replace `--platform=linux/amd64` with `--platform=linux/arm64`
+  - Replace `--platform=linux/amd64` with `--platform=linux/arm64`
 - Update hardcoded compilation targets in `Dockerfile`
--- Replace `RUN ./Configure no-shared linux-x86_64 --prefix=$PREFIX --libdir=lib` with `RUN ./Configure no-shared linux-aarch64 --prefix=$PREFIX --libdir=lib`
+  - Replace `RUN ./Configure no-shared linux-x86_64 --prefix=$PREFIX --libdir=lib` with `RUN ./Configure no-shared linux-aarch64 --prefix=$PREFIX --libdir=lib`
 
 #### Supporting additional formats / features of ffmpeg
 
